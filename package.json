@@ -1,0 +1,15 @@
+{
+  "main": "index.ts",
+  "scripts": {
+    "test": "tsx lib/test.ts",
+    "ncx": "tsx lib/cli.ts"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^16.18.37",
+    "prettier": "^2.8.8",
+    "tsx": "^3.12.7",
+    "typescript": "^5.1.6"
+  },
+  "version": "0.0.0"
+}
