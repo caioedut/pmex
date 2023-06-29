@@ -1,4 +1,4 @@
-# Node Command Execute
+# Package Manager Execute
 
 Dynamically selects YARN or NPM to execute commands. NPX is also supported.
 
@@ -7,7 +7,7 @@ Dynamically selects YARN or NPM to execute commands. NPX is also supported.
 Runs `yarn install` or `npm install` based on your default node package manager.
 
 ```shell
-ncx install
+pmex install
 ```
 
 ## package.json
@@ -17,7 +17,7 @@ Runs `yarn install` or `npm install` based on what you used in the terminal: `ya
 ```json
 {
   "scripts": {
-    "prestart": "ncx install",
+    "prestart": "pmex install",
     "start": "node server.js"
   }
 }
@@ -28,10 +28,10 @@ Runs `yarn install` or `npm install` based on what you used in the terminal: `ya
 Runs (`yarn test` + `yarn build`) or (`npm test` + `npm build`) based on what you used to run the file.
 
 ```js
-import ncx from 'ncx';
+import pmex from 'pmex';
 
-ncx('test')
-ncx('build')
+pmex('test')
+pmex('build')
 ```
 
 ### NPX
@@ -39,7 +39,7 @@ ncx('build')
 You can run it with NPX.
 
 ```js
-import ncx from 'ncx';
+import pmex from 'pmex';
 
-ncx('npx tsc')
+pmex('npx tsc')
 ```

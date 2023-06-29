@@ -1,4 +1,4 @@
-import ncx from '../src';
+import pmex from '../src';
 
-ncx(`prettier "{scripts,src,test}/**/*.{js,jsx,ts,tsx}" --check`);
-ncx(`tsc --noEmit`);
+pmex(`prettier "{scripts,src,test}/**/*.{js,jsx,ts,tsx}" --check`);
+pmex(`tsc --noEmit`);
