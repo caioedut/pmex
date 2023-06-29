@@ -1,15 +1,32 @@
 {
-  "main": "index.ts",
-  "scripts": {
-    "test": "tsx lib/test.ts",
-    "ncx": "tsx lib/cli.ts"
+  "name": "ncx",
+  "version": "0.0.1",
+  "keywords": [
+    "node",
+    "yarn",
+    "npm",
+    "npx"
+  ],
+  "license": "MIT",
+  "repository": "https://github.com/caioedut/ncx",
+  "author": {
+    "name": "Caio Teixeira",
+    "email": "caioedut@gmail.com"
   },
-  "dependencies": {},
+  "files": [
+    "dist"
+  ],
+  "main": "dist/index.js",
+  "bin": "./dist/cli.js",
+  "scripts": {
+    "test": "tsx scripts/test.ts",
+    "build": "tsx scripts/build.ts",
+    "ncx": "tsx src/cli.ts"
+  },
   "devDependencies": {
     "@types/node": "^16.18.37",
     "prettier": "^2.8.8",
     "tsx": "^3.12.7",
     "typescript": "^5.1.6"
-  },
-  "version": "0.0.0"
+  }
 }
