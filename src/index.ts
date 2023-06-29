@@ -20,7 +20,7 @@ export default function pmex(command: PmexCommand, options?: PmexOptions) {
     .replace(/^(run)\s+/, '')
     .trim();
 
-  const pmNative = isNpx || (isYarn ? yarnCommands : npmCommands).includes(pmCommand);
+  const pmNative = isNpx || (isYarn ? yarnCommands : npmCommands).includes(pmCommand.split(' ').shift() ?? '');
   const runScript = `${pmRunner}${pmNative ? '' : ' run'} ${pmCommand}`;
 
   process.stdout.write(`\n`);
