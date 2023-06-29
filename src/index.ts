@@ -1,11 +1,11 @@
 import { execSync, ExecSyncOptions } from 'child_process';
 import { npmCommands, yarnCommands } from './commands';
 
-export type NcxCommand = string | { npm: string; yarn: string };
+export type PmexCommand = string | { npm: string; yarn: string };
 
-export type NcxOptions = ExecSyncOptions;
+export type PmexOptions = ExecSyncOptions;
 
-export default function ncx(command: NcxCommand, options?: NcxOptions) {
+export default function pmex(command: PmexCommand, options?: PmexOptions) {
   const isYarn = `${process?.env?.npm_execpath || ''}`.toLowerCase().includes('yarn');
 
   // Set package manager

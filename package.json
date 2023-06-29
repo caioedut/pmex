@@ -1,7 +1,7 @@
 {
-  "name": "ncx",
+  "name": "pmex",
   "description": "Run dynamic YARN or NPM",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "keywords": [
     "node",
     "yarn",
@@ -9,7 +9,7 @@
     "npx"
   ],
   "license": "MIT",
-  "repository": "https://github.com/caioedut/ncx",
+  "repository": "https://github.com/caioedut/pmex",
   "author": {
     "name": "Caio Teixeira",
     "email": "caioedut@gmail.com"
@@ -22,7 +22,7 @@
   "scripts": {
     "test": "tsx scripts/test.ts",
     "build": "tsx scripts/build.ts",
-    "ncx": "tsx src/cli.ts"
+    "pmex": "tsx src/cli.ts"
   },
   "devDependencies": {
     "@types/node": "^16.18.37",

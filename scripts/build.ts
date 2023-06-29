@@ -1,5 +1,5 @@
 import { rmSync } from 'fs';
-import ncx from '../src/index';
+import pmex from '../src/index';
 
 // Remove current build
 rmSync('dist', {
@@ -7,4 +7,4 @@ rmSync('dist', {
   force: true,
 });
 
-ncx('tsc --build');
+pmex('tsc --build');

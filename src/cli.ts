@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import ncx from './index';
+import pmex from './index';
 
 const [, , ...args] = process.argv;
 
-ncx(args.join(' '));
+pmex(args.join(' '));
