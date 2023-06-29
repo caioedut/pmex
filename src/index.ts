@@ -1,5 +1,6 @@
 import { execSync, ExecSyncOptions } from 'child_process';
-import { npmCommands, yarnCommands } from './commands';
+import { join } from 'path';
+import { existsSync, readdirSync } from 'fs';
 
 export type PmexCommand = string | { npm: string; yarn: string };
 
@@ -7,6 +8,12 @@ export type PmexOptions = ExecSyncOptions;
 
 export default function pmex(command: PmexCommand, options?: PmexOptions) {
   const isYarn = `${process?.env?.npm_execpath || ''}`.toLowerCase().includes('yarn');
+
+  const binPath = join(`${process.cwd()}`, 'node_modules', '.bin');
+  const binScripts = existsSync(binPath) ? readdirSync(binPath).filter((file) => !file.includes('.')) : [];
+
+  const pkgPath = join(`${process.cwd()}`, 'package.json');
+  const pkgScripts: string[] = existsSync(pkgPath) ? Object.keys(require(pkgPath)?.scripts ?? {}) : [];
 
   // Set package manager
   const pm = isYarn ? 'yarn' : 'npm';
@@ -20,13 +27,15 @@ export default function pmex(command: PmexCommand, options?: PmexOptions) {
     .replace(/^(run)\s+/, '')
     .trim();
 
-  const pmNative = isNpx || (isYarn ? yarnCommands : npmCommands).includes(pmCommand.split(' ').shift() ?? '');
-  const runScript = `${pmRunner}${pmNative ? '' : ' run'} ${pmCommand}`;
+  const cmdArg = pmCommand.split(' ').shift() ?? '';
+  const isBinScript = binScripts.includes(cmdArg);
+  const isPkgScript = pkgScripts.includes(cmdArg);
+  const runScript = `${isBinScript ? '' : `${pmRunner} `}${isPkgScript ? 'run ' : ''}${pmCommand}`;
 
   process.stdout.write(`\n`);
   process.stdout.write(`\x1b[44m`);
   process.stdout.write(` ${pmRunner} `);
-  if (!pmNative) {
+  if (isPkgScript) {
     process.stdout.write(`\x1b[43m`);
     process.stdout.write(` run `);
   }
