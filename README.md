@@ -10,7 +10,7 @@ Runs `yarn install` or `npm install` based on your default node package manager.
 pmex install
 ```
 
-## package.json
+## Scripts
 
 Runs `yarn install` or `npm install` based on what you used in the terminal: `yarn start` or `npm start`.
 
@@ -25,21 +25,20 @@ Runs `yarn install` or `npm install` based on what you used in the terminal: `ya
 
 ## Runtime
 
-Runs (`yarn test` + `yarn build`) or (`npm test` + `npm build`) based on what you used to run the file.
+Runs commands based on what you used to run the file.
 
 ```js
 import pmex from 'pmex';
+
+// Different command based on package manager
+pmex({
+  npm: 'cache clean --force',
+  yarn: 'cache clean --all'
+})
 
 pmex('test')
+
+pmex('npx tsc --noEmit')
+
 pmex('build')
-```
-
-### NPX
-
-You can run it with NPX.
-
-```js
-import pmex from 'pmex';
-
-pmex('npx tsc')
 ```
