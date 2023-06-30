@@ -2,12 +2,10 @@ import { execSync, ExecSyncOptions } from 'child_process';
 import { join } from 'path';
 import { existsSync, readdirSync } from 'fs';
 
-export type PmexCommand = string | { npm: string; yarn: string };
-
-export type PmexOptions = ExecSyncOptions;
-
-export default function pmex(command: PmexCommand, options?: PmexOptions) {
+export default function pmex(command: string | { npm: string; yarn: string }, options?: ExecSyncOptions) {
+  // Set package manager
   const isYarn = `${process?.env?.npm_execpath || ''}`.toLowerCase().includes('yarn');
+  const pm = isYarn ? 'yarn' : 'npm';
 
   const binPath = join(`${process.cwd()}`, 'node_modules', '.bin');
   const binScripts = existsSync(binPath) ? readdirSync(binPath).filter((file) => !file.includes('.')) : [];
@@ -15,8 +13,6 @@ export default function pmex(command: PmexCommand, options?: PmexOptions) {
   const pkgPath = join(`${process.cwd()}`, 'package.json');
   const pkgScripts: string[] = existsSync(pkgPath) ? Object.keys(require(pkgPath)?.scripts ?? {}) : [];
 
-  // Set package manager
-  const pm = isYarn ? 'yarn' : 'npm';
   const args = (typeof command === 'string' ? command : command?.[pm]).trim().split(' ');
   const isNpx = args?.[0] === 'npx';
 
