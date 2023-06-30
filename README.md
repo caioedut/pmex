@@ -2,17 +2,27 @@
 
 Dynamically selects NPM or YARN or PNPM to execute commands. NPX is also supported.
 
-## CLI
-
-Runs `npm install` or `yarn install` or `pnpm install` based on your default node package manager.
+## API
 
 ```shell
-pmex install
+pmex [...command]
 ```
 
-## Scripts
+## Examples
 
-Runs `npm install` or `yarn install` or `pnpm install` based on what you used in the terminal: `yarn start` or `npm start`.
+### CLI
+This example runs  `npm install` or `yarn install` or `pnpm install` based on how you run the command.
+
+```shell
+pmex install // uses OS default's package manager (probably npm)
+pmex npm install
+pmex yarn install
+pmex pnpm install
+```
+
+### Scripts
+
+This example runs `npm install` or `yarn install` or `pnpm install` based on what you used in the terminal: `yarn start` or `npm start` or `pnpm start`.
 
 ```json
 {
@@ -23,9 +33,9 @@ Runs `npm install` or `yarn install` or `pnpm install` based on what you used in
 }
 ```
 
-## Runtime
+### Runtime
 
-Runs commands based on what you used to run the file.
+This example runs commands based on what you used to run the file.
 
 ```js
 import pmex from 'pmex';
@@ -34,7 +44,7 @@ import pmex from 'pmex';
 pmex({
   npm: 'cache clean --force',
   yarn: 'cache clean --all',
-  pnpm: 'pnpm store prune'
+  pnpm: 'store prune'
 })
 
 pmex('test')
@@ -42,4 +52,16 @@ pmex('test')
 pmex('npx tsc --noEmit')
 
 pmex('build')
+```
+
+### Override
+
+You can force the use of a package manager. This example runs `npm install` for all package managers and then runs `tsc` with automatic detection of the package manager.
+
+```js
+import pmex from 'pmex';
+
+pmex('npm install -g tsc')
+
+pmex('tsc --noEmit')
 ```
