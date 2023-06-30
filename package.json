@@ -1,7 +1,7 @@
 {
   "name": "pmex",
   "description": "Run dynamic NPM or YARN or PNPM",
-  "version": "0.0.26",
+  "version": "0.0.3",
   "keywords": [
     "node",
     "npm",
