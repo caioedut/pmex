@@ -2,10 +2,10 @@ import { execSync, ExecSyncOptions } from 'child_process';
 import { join } from 'path';
 import { existsSync, readdirSync } from 'fs';
 
-export default function pmex(command: string | { npm: string; yarn: string }, options?: ExecSyncOptions) {
+export default function pmex(command: string | { npm: string; yarn: string; pnpm: string }, options?: ExecSyncOptions) {
   // Set package manager
-  const isYarn = `${process?.env?.npm_execpath || ''}`.toLowerCase().includes('yarn');
-  const pm = isYarn ? 'yarn' : 'npm';
+  const execPath = `${process?.env?.npm_execpath || ''}`.toLowerCase();
+  const pm = execPath.includes('yarn') ? 'yarn' : execPath.includes('pnpm') ? 'pnpm' : 'npm';
 
   const binPath = join(`${process.cwd()}`, 'node_modules', '.bin');
   const binScripts = existsSync(binPath) ? readdirSync(binPath).filter((file) => !file.includes('.')) : [];
@@ -19,7 +19,7 @@ export default function pmex(command: string | { npm: string; yarn: string }, op
   const pmRunner = isNpx ? 'npx' : pm;
   const pmCommand = args
     .join(' ')
-    .replace(/^(yarn|npm|npx)\s+/, '')
+    .replace(/^(npm|yarn|pnpm|npx)\s+/, '')
     .replace(/^(run)\s+/, '')
     .trim();
 

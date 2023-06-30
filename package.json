@@ -1,11 +1,12 @@
 {
   "name": "pmex",
-  "description": "Run dynamic YARN or NPM",
+  "description": "Run dynamic NPM or YARN or PNPM",
   "version": "0.0.24",
   "keywords": [
     "node",
-    "yarn",
     "npm",
+    "yarn",
+    "pnpm",
     "npx"
   ],
   "license": "MIT",
