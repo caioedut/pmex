@@ -59,61 +59,11 @@ export default function pmex(command: string | { npm: string; yarn: string; pnpm
   process.stdout.write(colors.reset);
   process.stdout.write(`\n\n`);
 
-  try {
-    return execSync(runScript, {
-      stdio: 'inherit',
-      encoding: 'utf-8',
-      ...options,
-    });
-  } catch (error: any) {
-    const message = error?.message ?? error?.text ?? error?.title ?? error?.name ?? error?.code ?? 'No message';
-
-    let stack: string[] = [];
-
-    if (typeof error?.stack === 'string') {
-      stack = error.stack
-        .split(`\n`)
-        .map((line: string) => line.trim())
-        .filter((line: string) => /^at\s+/.test(line))
-        .map((line: string) => {
-          const cwdRegex = new RegExp(`^${process.cwd().replace(/\\/g, `\\\\`)}`, 'i');
-
-          return line //
-            .substring(line.indexOf('('))
-            .replace(/^\(/, '')
-            .replace(/\)$/, '')
-            .replace(cwdRegex, '.');
-        });
-    }
-
-    process.stdout.write(`\n`);
-    process.stdout.write(colors.bgRed);
-    process.stdout.write(` ERROR `);
-    process.stdout.write(colors.bgGray);
-    process.stdout.write(` ${message} `);
-    process.stdout.write(colors.reset);
-
-    stack.forEach((item) => {
-      const split = item.split(':');
-      const column = split.pop();
-      const row = split.pop();
-      const path = split.join(':').replace(/\\/g, '/');
-      const padding = process.stdout.columns - ` ERROR  ${path}  ${row}:${column} `.length;
-
-      process.stdout.write(`\n`);
-      process.stdout.write(colors.bgYellow);
-      process.stdout.write(` TRACE `);
-      process.stdout.write(colors.bgGray);
-      process.stdout.write(` ${path} `);
-      process.stdout.write(``.padEnd(padding, ' '));
-      process.stdout.write(colors.bgBlue);
-      process.stdout.write(` ${row}:${column} `);
-      process.stdout.write(colors.reset);
-    });
-
-    process.stdout.write(`\n\n`);
-    process.exit(1);
-  }
+  return execSync(runScript, {
+    stdio: 'inherit',
+    encoding: 'utf-8',
+    ...options,
+  });
 }
 
 const colors = {
