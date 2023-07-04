@@ -30,9 +30,24 @@ export default function pmex(command: string | { npm: string; yarn: string; pnpm
     .replace(/^(run)\s+/, '')
     .trim();
 
-  // Detect binaries
+  // Detect global binaries
+  const npmGlobalDir = join(process.execPath, '..', 'node_modules');
+  const globalBins = readdirSync(npmGlobalDir)
+    .filter((file) => {
+      return existsSync(join(npmGlobalDir, file, 'package.json'));
+    })
+    .map((file) => {
+      const pkgJSON = require(join(npmGlobalDir, file, 'package.json'));
+      const pkgBin = pkgJSON.bin ?? {};
+      return typeof pkgBin === 'string' ? pkgJSON.name : Object.keys(pkgBin);
+    })
+    .flat();
+
+  // Detect local binaries
   const binPath = join(`${process.cwd()}`, 'node_modules', '.bin');
-  const binScripts = existsSync(binPath) ? readdirSync(binPath).filter((file) => !file.includes('.')) : [];
+  const localBins = existsSync(binPath) ? readdirSync(binPath).filter((file) => !file.includes('.')) : [];
+
+  const binScripts: string[] = [...globalBins, ...localBins];
 
   // Detect scripts
   const pkgPath = join(`${process.cwd()}`, 'package.json');
