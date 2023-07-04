@@ -31,7 +31,7 @@ export default function pmex(command: string | { npm: string; yarn: string; pnpm
     .trim();
 
   // Detect global binaries
-  const npmGlobalDir = join(process.execPath, '..', 'node_modules');
+  const npmGlobalDir = execSync(`npm root -g`).toString().trim();
   const globalBins = readdirSync(npmGlobalDir)
     .filter((file) => {
       return existsSync(join(npmGlobalDir, file, 'package.json'));
