@@ -69,9 +69,8 @@ export default function pmex(command: string | { npm: string; yarn: string; pnpm
     process.stdout.write(colors.bgYellow);
     process.stdout.write(` run `);
   }
-  process.stdout.write(colors.bgGray);
-  process.stdout.write(` ${command} `);
   process.stdout.write(colors.reset);
+  process.stdout.write(` ${command}`);
   process.stdout.write(`\n\n`);
 
   return execSync(runScript, {
