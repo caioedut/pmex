@@ -23,6 +23,7 @@
   "scripts": {
     "test": "tsx scripts/test.ts",
     "build": "tsx scripts/build.ts",
+    "publish:stable": "tsx scripts/publish.ts",
     "pmex": "tsx src/cli.ts"
   },
   "devDependencies": {
