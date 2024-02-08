@@ -2,9 +2,7 @@ import { rmSync } from 'fs';
 import pmex from '../src/index';
 
 // Remove current build
-rmSync('dist', {
-  recursive: true,
-  force: true,
-});
+rmSync('dist', { force: true, recursive: true });
 
-pmex('tsc --build');
+// Build with ParcelJS
+pmex('parcel build');
