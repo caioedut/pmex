@@ -2,12 +2,15 @@ import { execSync } from 'child_process';
 
 import pmex from '../src/index';
 
+const args = process.argv.slice(2);
+
 pmex('test');
 
-pmex('tsc --build --force');
+pmex('build');
 
-pmex('npm version patch');
+if (!args.includes('--no-version')) {
+  pmex('npm version patch');
+  execSync('git push', { stdio: 'inherit' });
+}
 
-pmex('npm publish');
-
-execSync('git push', { stdio: 'inherit' });
+execSync('npm publish', { stdio: 'inherit' });

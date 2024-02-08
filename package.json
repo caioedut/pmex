@@ -1,7 +1,7 @@
 {
   "name": "pmex",
   "description": "Run dynamic NPM or YARN or PNPM",
-  "version": "0.0.35",
+  "version": "1.0.0",
   "keywords": [
     "node",
     "npm",
@@ -10,16 +10,23 @@
     "npx"
   ],
   "license": "MIT",
-  "repository": "https://github.com/caioedut/pmex",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/caioedut/pmex"
+  },
   "author": {
     "name": "Caio Teixeira",
     "email": "caioedut@gmail.com"
   },
+  "type": "commonjs",
+  "source": "src/index.ts",
+  "bin": "./dist/cli.js",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/types.d.ts",
   "files": [
     "dist"
   ],
-  "main": "dist/index.js",
-  "bin": "./dist/cli.js",
   "scripts": {
     "test": "tsx scripts/test.ts",
     "build": "tsx scripts/build.ts",
@@ -27,7 +34,10 @@
     "pmex": "tsx src/cli.ts"
   },
   "devDependencies": {
+    "@parcel/packager-ts": "2.11.0",
+    "@parcel/transformer-typescript-types": "2.11.0",
     "@types/node": "^16.18.37",
+    "parcel": "^2.11.0",
     "prettier": "^2.8.8",
     "tsx": "^3.12.7",
     "typescript": "^5.1.6"
