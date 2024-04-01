@@ -1,6 +1,6 @@
 # Package Manager Execute
 
-Dynamically selects NPM or YARN or PNPM to execute commands. NPX is also supported.
+Dynamically selects NPM or YARN or PNPM or BUN to execute commands. NPX is also supported.
 
 ## API
 
@@ -11,18 +11,19 @@ pmex [...command]
 ## Examples
 
 ### CLI
-This example runs  `npm install` or `yarn install` or `pnpm install` based on how you run the command.
+This example runs  `npm install` or `yarn install` or `pnpm install` or `bun install` based on how you run the command.
 
 ```shell
 pmex install // uses OS default's package manager (probably npm)
 pmex npm install
 pmex yarn install
 pmex pnpm install
+pmex bun install
 ```
 
 ### Scripts
 
-This example runs `npm install` or `yarn install` or `pnpm install` based on what you used in the terminal: `yarn start` or `npm start` or `pnpm start`.
+This example runs `npm install` or `yarn install` or `pnpm install` or `bun install` based on what you used in the terminal: `yarn start` or `npm start` or `pnpm start`  or `bun start`.
 
 ```json
 {
@@ -44,7 +45,8 @@ import pmex from 'pmex';
 pmex({
   npm: 'cache clean --force',
   yarn: 'cache clean --all',
-  pnpm: 'store prune'
+  pnpm: 'store prune',
+  bun: 'bun pm cache rm -g'
 })
 
 pmex('test')
