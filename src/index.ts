@@ -2,12 +2,17 @@ import { execSync, ExecSyncOptions } from 'child_process';
 import { join } from 'path';
 import { existsSync, readdirSync } from 'fs';
 
-export default function pmex(command: string | { npm: string; yarn: string; pnpm: string }, options?: ExecSyncOptions) {
+export default function pmex(
+  command: string | { npm: string; yarn: string; pnpm: string; bun: string },
+  options?: ExecSyncOptions,
+) {
   const execPath = `${process?.env?.npm_execpath || ''}`.toLowerCase();
 
-  const runners = ['npx', 'npm', 'yarn', 'pnpm'] as const;
+  const runners = ['npx', 'npm', 'yarn', 'pnpm', 'bun'] as const;
 
-  let runner: (typeof runners)[number] = execPath.includes('pnpm')
+  let runner: (typeof runners)[number] = execPath.includes('bun')
+    ? 'bun'
+    : execPath.includes('pnpm')
     ? 'pnpm'
     : execPath.includes('yarn')
     ? 'yarn'
@@ -26,7 +31,7 @@ export default function pmex(command: string | { npm: string; yarn: string; pnpm
   }
 
   command = command
-    .replace(/^(npx|npm|yarn|pnpm)\s+/, '')
+    .replace(/^(npx|npm|yarn|pnpm|bun)\s+/, '')
     .replace(/^(run)\s+/, '')
     .trim();
 
