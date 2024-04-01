@@ -20,7 +20,7 @@
   },
   "type": "commonjs",
   "source": "src/index.ts",
-  "bin": "./dist/cli.js",
+  "bin": "dist/cli.js",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/types.d.ts",
@@ -34,10 +34,7 @@
     "pmex": "tsx src/cli.ts"
   },
   "devDependencies": {
-    "@parcel/packager-ts": "2.11.0",
-    "@parcel/transformer-typescript-types": "2.11.0",
-    "@types/node": "^16.18.37",
-    "parcel": "^2.11.0",
+    "@types/node": "^16.18.0",
     "prettier": "^2.8.8",
     "tsx": "^3.12.7",
     "typescript": "^5.1.6"
