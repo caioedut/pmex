@@ -1,4 +1,5 @@
-export type Args = Omit<{ [key: string]: string | number | boolean }, '_args'> & {
+export type Args = Omit<{ [key: string]: string | number | boolean }, '_args' | '_raw'> & {
+  _raw: string;
   _args: string[];
 };
 
@@ -6,7 +7,10 @@ export default function args() {
   const argv = process.argv?.slice(2) ?? [];
 
   // @ts-expect-error
-  const result: Args = { _args: [] };
+  const result: Args = {
+    _raw: argv.join(' '),
+    _args: [],
+  };
 
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
