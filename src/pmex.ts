@@ -12,10 +12,10 @@ export default function pmex(command: Command, options?: ExecSyncOptions) {
   let runner: (typeof runners)[number] = execPath.includes('bun')
     ? 'bun'
     : execPath.includes('pnpm')
-    ? 'pnpm'
-    : execPath.includes('yarn')
-    ? 'yarn'
-    : 'npm';
+      ? 'pnpm'
+      : execPath.includes('yarn')
+        ? 'yarn'
+        : 'npm';
 
   if (command && typeof command !== 'string') {
     command = command?.[runner]!;
