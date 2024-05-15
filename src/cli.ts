@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import pmex from './index';
+import pmex from './pmex';
 
 const [, , ...args] = process.argv;
 

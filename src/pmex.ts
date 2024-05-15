@@ -1,11 +1,10 @@
-import { execSync, ExecSyncOptions } from 'child_process';
-import { existsSync, readdirSync } from 'fs';
-import { join } from 'path';
+import { execSync, ExecSyncOptions } from 'node:child_process';
+import { existsSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
 
-export default function pmex(
-  command: string | { npm: string; yarn: string; pnpm: string; bun: string },
-  options?: ExecSyncOptions,
-) {
+export type Command = string | { npm: string; yarn: string; pnpm: string; bun: string };
+
+export default function pmex(command: Command, options?: ExecSyncOptions) {
   const execPath = `${process?.env?.npm_execpath || ''}`.toLowerCase();
 
   const runners = ['npx', 'npm', 'yarn', 'pnpm', 'bun'] as const;
