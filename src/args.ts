@@ -3,7 +3,7 @@ export type Args = Omit<{ [key: string]: string | number | boolean }, '_args' | 
   _args: string[];
 };
 
-export default function args() {
+export default function args(defaults?: Record<string, string | number | boolean>) {
   const argv = process.argv?.slice(2) ?? [];
 
   // @ts-expect-error
@@ -11,6 +11,22 @@ export default function args() {
     _raw: argv.join(' '),
     _args: [],
   };
+
+  if (defaults) {
+    argv.unshift(
+      ...Object.entries(defaults)
+        .map(([attr, value]) => [`--${attr}`, `${value}`])
+        .flat(),
+    );
+
+    for (const attr in defaults) {
+      if (attr in result) {
+        continue;
+      }
+
+      result[attr] = defaults[attr];
+    }
+  }
 
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];

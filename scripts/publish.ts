@@ -1,6 +1,5 @@
-import { execSync } from 'child_process';
-
-import pmex from '../src/index';
+import { execSync } from 'node:child_process';
+import pmex from '../src';
 
 const args = process.argv.slice(2);
 
