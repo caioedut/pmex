@@ -7,7 +7,7 @@ export type Command = string | { npm: string; yarn: string; pnpm: string; bun: s
 export default function pmex(command: Command, options?: ExecSyncOptions) {
   const execPath = `${process?.env?.npm_execpath || ''}`.toLowerCase();
 
-  const runners = ['npx', 'npm', 'yarn', 'pnpm', 'bun'] as const;
+  const runners = ['npm', 'yarn', 'pnpm', 'bun', 'npx', 'bunx'] as const;
 
   let runner: (typeof runners)[number] = execPath.includes('bun')
     ? 'bun'
@@ -30,7 +30,7 @@ export default function pmex(command: Command, options?: ExecSyncOptions) {
   }
 
   command = command
-    .replace(/^(npx|npm|yarn|pnpm|bun)\s+/, '')
+    .replace(new RegExp(`^(${runners.join('|')})\\s+`), '')
     .replace(/^(run)\s+/, '')
     .trim();
 
