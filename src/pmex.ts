@@ -2,23 +2,40 @@ import { execSync, ExecSyncOptions } from 'node:child_process';
 import { existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
-export type Command = string | { npm: string; yarn: string; pnpm: string; bun: string };
+export type Command =
+  | string
+  | {
+      default: string;
+      npm?: string;
+      yarn?: string;
+      pnpm?: string;
+      bun?: string;
+    }
+  | {
+      npm: string;
+      yarn: string;
+      pnpm: string;
+      bun: string;
+    };
 
 export default function pmex(command: Command, options?: ExecSyncOptions) {
   const execPath = `${process?.env?.npm_execpath || ''}`.toLowerCase();
 
   const runners = ['npm', 'yarn', 'pnpm', 'bun', 'npx', 'bunx'] as const;
 
-  let runner: (typeof runners)[number] = execPath.includes('bun')
+  let runner: (typeof runners)[number] | null = execPath.includes('bun')
     ? 'bun'
     : execPath.includes('pnpm')
       ? 'pnpm'
       : execPath.includes('yarn')
         ? 'yarn'
-        : 'npm';
+        : execPath.includes('npm')
+          ? 'npm'
+          : null;
 
   if (command && typeof command !== 'string') {
-    command = command?.[runner]!;
+    // @ts-expect-error
+    command = command?.[runner ?? 'default'];
   }
 
   command = `${command ?? ''}`.trim();
