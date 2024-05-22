@@ -49,6 +49,12 @@ pmex({
   bun: 'bun pm cache rm -g'
 })
 
+// Fallback defaults
+pmex({
+  bun: 'bunx cowsay "Hello World!"',
+  default: 'npx cowsay "Hello World!"'
+})
+
 pmex('test')
 
 pmex('npx tsc --noEmit')
