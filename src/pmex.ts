@@ -35,7 +35,7 @@ export default function pmex(command: Command, options?: ExecSyncOptions) {
 
   if (command && typeof command !== 'string') {
     // @ts-expect-error
-    command = command?.[runner ?? 'default'];
+    command = command?.[runner] ?? command?.default;
   }
 
   command = `${command ?? ''}`.trim();
