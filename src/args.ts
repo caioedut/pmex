@@ -1,6 +1,6 @@
-export type Args = Omit<{ [key: string]: string | number | boolean }, '_args' | '_raw'> & {
-  _raw: string;
-  _args: string[];
+export type Args = Omit<{ [key: string]: string | number | boolean }, '_' | '$'> & {
+  _: string[];
+  $: string;
 };
 
 export default function args(defaults?: Record<string, string | number | boolean>) {
@@ -8,8 +8,8 @@ export default function args(defaults?: Record<string, string | number | boolean
 
   // @ts-expect-error
   const result: Args = {
-    _raw: argv.join(' '),
-    _args: [],
+    $: '',
+    _: [],
   };
 
   if (defaults) {
@@ -33,7 +33,7 @@ export default function args(defaults?: Record<string, string | number | boolean
     const next = argv[i + 1];
 
     if (!arg.startsWith('-')) {
-      result._args.push(arg);
+      result._.push(arg);
       continue;
     }
 
@@ -61,9 +61,16 @@ export default function args(defaults?: Record<string, string | number | boolean
         value = parseFloat(value);
       }
 
+      const isExplicitVal = ['string', 'number'].includes(typeof value);
+      const prefix = isExplicitVal || attr.length > 1 ? '--' : '-';
+      const finalValue = typeof value === 'string' && /\s/.test(value) ? `"${value}"` : value;
+      result.$ += `${prefix}${attr}${isExplicitVal ? `=${finalValue}` : ''} `;
+
       result[attr] = value;
     }
   }
+
+  result.$ = `${result._.join(' ')} ${result.$.trim()}`.trim();
 
   return result;
 }

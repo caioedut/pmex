@@ -7,7 +7,9 @@
     "npm",
     "yarn",
     "pnpm",
-    "npx"
+    "bun",
+    "npx",
+    "bunx"
   ],
   "license": "MIT",
   "repository": "https://github.com/caioedut/pmex",
@@ -15,11 +17,11 @@
     "name": "Caio Teixeira",
     "email": "caioedut@gmail.com"
   },
+  "main": "./dist/index.js",
+  "bin": "./dist/cli.js",
   "files": [
     "dist"
   ],
-  "main": "./dist/index.js",
-  "bin": "./dist/cli.js",
   "scripts": {
     "test": "tsx scripts/test.ts",
     "build": "tsx scripts/build.ts",
@@ -27,9 +29,9 @@
     "pmex": "tsx src/cli.ts"
   },
   "devDependencies": {
-    "@types/node": "^18.18.14",
+    "@types/node": "^18.19.33",
     "prettier": "^3.2.5",
-    "tsx": "^4.10.2",
+    "tsx": "^4.11.0",
     "typescript": "^5.4.5"
   }
 }
