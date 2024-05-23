@@ -17,17 +17,7 @@ export default function args(defaults?: Record<string, string | number | boolean
   };
 
   if (defaults) {
-    argv.unshift(
-      ...Object.entries(defaults)
-        .map(([attr, value]) => [`--${attr}`, `${value}`])
-        .flat(),
-    );
-
     for (const attr in defaults) {
-      if (attr in result) {
-        continue;
-      }
-
       result[attr] = defaults[attr];
     }
   }
@@ -65,11 +55,6 @@ export default function args(defaults?: Record<string, string | number | boolean
         value = parseFloat(value);
       }
 
-      const isExplicitVal = ['string', 'number'].includes(typeof value);
-      const prefix = isExplicitVal || attr.length > 1 ? '--' : '-';
-      const finalValue = typeof value === 'string' && /\s/.test(value) ? `"${value}"` : value;
-      result.$ += `${prefix}${attr}${isExplicitVal ? `=${finalValue}` : ''} `;
-
       // Parse case
       switch (options?.case) {
         case 'camel':
@@ -102,6 +87,16 @@ export default function args(defaults?: Record<string, string | number | boolean
 
       result[attr] = value;
     }
+  }
+
+  for (const attr in result) {
+    if (attr === '_' || attr === '$') continue;
+
+    const value = `${result[attr]}`;
+    const isExplicitVal = value !== 'true';
+    const prefix = isExplicitVal || attr.length > 1 ? '--' : '-';
+    const finalValue = /\s/.test(value) ? `"${value}"` : value;
+    result.$ += `${prefix}${attr}${isExplicitVal ? `=${finalValue}` : ''} `;
   }
 
   result.$ = `${result._.join(' ')} ${result.$.trim()}`.trim();
