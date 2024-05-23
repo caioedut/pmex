@@ -3,7 +3,11 @@ export type Args = Omit<{ [key: string]: string | number | boolean }, '_' | '$'>
   $: string;
 };
 
-export default function args(defaults?: Record<string, string | number | boolean>) {
+export type ArgsOptions = {
+  case?: 'camel' | 'pascal' | 'snake' | 'kebab' | null;
+};
+
+export default function args(defaults?: Record<string, string | number | boolean>, options?: ArgsOptions) {
   const argv = process.argv?.slice(2) ?? [];
 
   // @ts-expect-error
@@ -65,6 +69,36 @@ export default function args(defaults?: Record<string, string | number | boolean
       const prefix = isExplicitVal || attr.length > 1 ? '--' : '-';
       const finalValue = typeof value === 'string' && /\s/.test(value) ? `"${value}"` : value;
       result.$ += `${prefix}${attr}${isExplicitVal ? `=${finalValue}` : ''} `;
+
+      // Parse case
+      switch (options?.case) {
+        case 'camel':
+          attr = attr
+            .replace(/^([a-zA-Z])/, (_, $1) => $1.toLowerCase())
+            .replace(/([^a-zA-Z])([a-zA-Z])/g, (_, $1, $2) => $2.toUpperCase());
+          break;
+        case 'pascal':
+          attr = attr
+            .replace(/^([a-zA-Z])/, (_, $1) => $1.toUpperCase())
+            .replace(/([^a-zA-Z])([a-zA-Z])/g, (_, $1, $2) => $2.toUpperCase());
+          break;
+        case 'snake':
+          attr = attr
+            .replace(/([a-z])([A-Z])/g, '$1-$2')
+            .toLowerCase()
+            .replace(/([^a-z_])/g, '_')
+            .replace(/^_/, '')
+            .replace(/_$/, '');
+          break;
+        case 'kebab':
+          attr = attr
+            .replace(/([a-z])([A-Z])/g, '$1-$2')
+            .toLowerCase()
+            .replace(/([^a-z\-])/g, '-')
+            .replace(/^-/, '')
+            .replace(/-$/, '');
+          break;
+      }
 
       result[attr] = value;
     }
