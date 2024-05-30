@@ -1,27 +1,33 @@
 # Package Manager Execute
 
-Dynamically selects NPM or YARN or PNPM or BUN to execute commands. NPX is also supported.
-
-## API
+Dynamically selects NPM or YARN or PNPM or BUN to execute commands.
 
 ```shell
 pmex [...command]
 ```
 
-## Examples
+## CLI
 
-### CLI
-This example runs  `npm install` or `yarn install` or `pnpm install` or `bun install` based on how you run the command.
+### Auto Selection
+Runs  `npm install` or `yarn install` or `pnpm install` or `bun install` based on most recent LOCKFILE.
 
 ```shell
-pmex install // uses OS default's package manager (probably npm)
+pmex install
+```
+
+### Manual Selection
+
+Runs  `npm install` or `yarn install` or `pnpm install` or `bun install` based on how you run the command.
+
+```shell
+pmex install
 pmex npm install
 pmex yarn install
 pmex pnpm install
 pmex bun install
 ```
 
-### Scripts
+## Scripting
 
 This example runs `npm install` or `yarn install` or `pnpm install` or `bun install` based on what you used in the terminal: `yarn start` or `npm start` or `pnpm start`  or `bun start`.
 
