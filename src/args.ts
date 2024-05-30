@@ -5,10 +5,13 @@ export type Args = Omit<{ [key: string]: string | number | boolean }, '_' | '$'>
 
 export type ArgsOptions = {
   case?: 'camel' | 'pascal' | 'snake' | 'kebab' | null;
+  aliases?: Record<string, string>;
 };
 
 export default function args(defaults?: Record<string, string | number | boolean>, options?: ArgsOptions) {
   const argv = process.argv?.slice(2) ?? [];
+
+  const { case: caseStyle, aliases = {} } = options || {};
 
   // @ts-expect-error
   const result: Args = {
@@ -17,8 +20,9 @@ export default function args(defaults?: Record<string, string | number | boolean
   };
 
   if (defaults) {
-    for (const attr in defaults) {
-      result[attr] = defaults[attr];
+    for (let attr in defaults) {
+      const finalAttr = aliases[attr] ?? attr;
+      result[finalAttr] = defaults[attr];
     }
   }
 
@@ -56,7 +60,7 @@ export default function args(defaults?: Record<string, string | number | boolean
       }
 
       // Parse case
-      switch (options?.case) {
+      switch (caseStyle) {
         case 'camel':
           attr = attr
             .replace(/^([a-zA-Z])/, (_, $1) => $1.toLowerCase())
@@ -85,6 +89,7 @@ export default function args(defaults?: Record<string, string | number | boolean
           break;
       }
 
+      attr = aliases[attr] ?? attr;
       result[attr] = value;
     }
   }
