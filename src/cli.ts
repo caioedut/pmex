@@ -6,10 +6,12 @@ import { RUNNERS } from './constants';
 
 const [, , ...args] = process.argv;
 
+const isPackageScript = Boolean(process.env.npm_lifecycle_event);
+
 let command = args.join(' ');
 
 // Check if command replaces package manager detection
-if (!RUNNERS.some((runner) => command.startsWith(`${runner} `))) {
+if (!isPackageScript && !RUNNERS.some((runner) => command.startsWith(`${runner} `))) {
   let runner = null;
   let mtimeMs = 0;
 
@@ -35,4 +37,5 @@ if (!RUNNERS.some((runner) => command.startsWith(`${runner} `))) {
   }
 }
 
-pmex(command);
+console.log(command);
+// pmex(command);
