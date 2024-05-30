@@ -1,6 +1,7 @@
 import { execSync, ExecSyncOptions } from 'node:child_process';
 import { existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { RUNNERS } from './constants';
 
 export type Command =
   | string
@@ -21,9 +22,7 @@ export type Command =
 export default function pmex(command: Command, options?: ExecSyncOptions) {
   const execPath = `${process?.env?.npm_execpath || ''}`.toLowerCase();
 
-  const runners = ['npm', 'yarn', 'pnpm', 'bun', 'npx', 'bunx'] as const;
-
-  let runner: (typeof runners)[number] | null = execPath.includes('bun')
+  let runner: (typeof RUNNERS)[number] | null = execPath.includes('bun')
     ? 'bun'
     : execPath.includes('pnpm')
       ? 'pnpm'
@@ -41,13 +40,13 @@ export default function pmex(command: Command, options?: ExecSyncOptions) {
   command = `${command ?? ''}`.trim();
 
   // Check if command replaces package manager detection
-  if (runners.some((runner) => (command as string).startsWith(`${runner} `))) {
+  if (RUNNERS.some((runner) => (command as string).startsWith(`${runner} `))) {
     // @ts-expect-error
     runner = command.split(' ', 1).shift();
   }
 
   command = command
-    .replace(new RegExp(`^(${runners.join('|')})\\s+`), '')
+    .replace(new RegExp(`^(${RUNNERS.join('|')})\\s+`), '')
     .replace(/^(run)\s+/, '')
     .trim();
 
