@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import pmex from './pmex';
 import { existsSync, statSync } from 'node:fs';
 import { RUNNERS } from './constants';
+import pmex from './pmex';
 
 const [, , ...args] = process.argv;
 

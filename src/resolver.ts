@@ -1,19 +1,19 @@
 export default function resolver(command: string) {
-  let [runner, fnName, ...params] = command.split(' ');
+  const [runner, fnName, ...params] = command.split(' ');
 
   // @ts-expect-error
   const newFnName = aliases[fnName]?.[runner] ?? fnName;
-  command = `${newFnName} ${params.join(' ')}`;
+  let newCommand = `${newFnName} ${params.join(' ')}`;
 
   if (runner === 'npm' && newFnName === 'run') {
-    command = command.replace(/-/, '-- -');
+    newCommand = newCommand.replace(/-/, '-- -');
   }
 
   if (fnName !== 'x' && fnName !== 'dlx') {
-    command = `${runner} ${command}`;
+    newCommand = `${runner} ${newCommand}`;
   }
 
-  return command.trim();
+  return newCommand.trim();
 }
 
 const add = {
