@@ -52,10 +52,10 @@ pmex({
   npm: 'cache clean --force',
   yarn: 'cache clean --all',
   pnpm: 'store prune',
-  bun: 'bun pm cache rm -g'
+  bun: 'pm cache rm -g'
 })
 
-// Fallback defaults
+// Fallback to default
 pmex({
   bun: 'bunx cowsay "Hello World!"',
   default: 'npx cowsay "Hello World!"'
