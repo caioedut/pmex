@@ -37,5 +37,4 @@ if (!isPackageScript && !RUNNERS.some((runner) => command.startsWith(`${runner} 
   }
 }
 
-console.log(command);
-// pmex(command);
+pmex(command);
