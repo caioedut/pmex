@@ -61,8 +61,9 @@ export default function pmex(command: Command, options?: ExecSyncOptions) {
 
   // Detect local binaries
   const binPath = join(`${process.cwd()}`, 'node_modules', '.bin');
-  const localBins = existsSync(binPath) ? readdirSync(binPath).filter((file) => !file.includes('.')) : [];
+  const localBins = existsSync(binPath) ? readdirSync(binPath).map((file) => file.split('.').shift()) : [];
 
+  // All bins
   const binScripts: string[] = [...globalBins, ...localBins];
 
   // Detect scripts
