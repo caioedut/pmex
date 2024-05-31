@@ -15,21 +15,11 @@ Runs  `npm install` or `yarn install` or `pnpm install` or `bun install` based o
 pmex install
 ```
 
-### Manual Selection
-
-Runs  `npm install` or `yarn install` or `pnpm install` or `bun install` based on how you run the command.
-
-```shell
-pmex install
-pmex npm install
-pmex yarn install
-pmex pnpm install
-pmex bun install
-```
-
 ## Defined Commands
 
 ### `add`
+
+Add packages to the project.
 
 ```bash
 pmex add typescript
@@ -42,7 +32,9 @@ pmex add typescript
 
 ### `del`
 
-Aliases: `uninstall`, `remove`.
+Remove packages from project.
+
+Aliases: `remove`, `uninstall`.
 
 ```bash
 pmex del typescript
@@ -57,6 +49,8 @@ pmex del typescript
 
 Aliases: `dlx`.
 
+Auto-install (no save) and run packages from NPM.
+
 ```bash
 pmex x cowsay "Hello World!"
 
@@ -64,6 +58,21 @@ pmex x cowsay "Hello World!"
 # yarn dlx cowsay "Hello World!"
 # pnpm dlx cowsay "Hello World!"
 # bunx cowsay "Hello World!"
+```
+
+### `cc`
+
+Aliases: `cache-clean`, `cache-clear`.
+
+Clear the package manager cache.
+
+```bash
+pmex cc
+
+# npm cache clean --force
+# yarn cache clean --all
+# pnpm store prune
+# bun pm cache rm
 ```
 
 ## Scripting
@@ -102,7 +111,7 @@ pmex({
 
 pmex('test')
 
-pmex('npx tsc --noEmit')
+pmex('tsc --noEmit')
 
 pmex('build')
 ```

@@ -9,7 +9,7 @@ export default function resolver(command: string) {
     command = command.replace(/-/, '-- -');
   }
 
-  if (fnName !== 'dlx') {
+  if (fnName !== 'x' && fnName !== 'dlx') {
     command = `${runner} ${command}`;
   }
 
@@ -37,6 +37,13 @@ const dlx = {
   bun: 'bunx',
 };
 
+const cc = {
+  npm: 'cache clean --force',
+  yarn: 'cache clean --all',
+  pnpm: 'store prune',
+  bun: 'pm cache rm',
+};
+
 const aliases = {
   add,
   remove: del,
@@ -44,4 +51,7 @@ const aliases = {
   del,
   dlx,
   x: dlx,
+  cc,
+  'cache-clean': cc,
+  'cache-clear': cc,
 };
