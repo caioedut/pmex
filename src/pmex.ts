@@ -75,7 +75,9 @@ export default function pmex(command: Command, options?: ExecSyncOptions) {
   const isPkgScript = pkgScripts.includes(cmdArg);
   const runScript = resolver(`${isBinScript ? '' : `${runner} `}${isPkgScript ? 'run ' : ''}${cmd}`);
 
-  const [printRunner, ...printRest] = runScript.split(' ');
+  const splitScript = runScript.split(' ');
+  const printRunner = isBinScript ? runner : splitScript.shift();
+  const printCommand = (isPkgScript ? splitScript.slice(1) : splitScript).join(' ');
 
   process.stdout.write('\n');
   process.stdout.write(colors.bgBlue);
@@ -85,12 +87,11 @@ export default function pmex(command: Command, options?: ExecSyncOptions) {
     process.stdout.write(' bin ');
   }
   if (isPkgScript) {
-    printRest.splice(0, 1);
     process.stdout.write(colors.bgYellow);
     process.stdout.write(' run ');
   }
   process.stdout.write(colors.reset);
-  process.stdout.write(` ${printRest.join(' ')}`);
+  process.stdout.write(` ${printCommand}`);
   process.stdout.write('\n\n');
 
   return execSync(runScript, {
