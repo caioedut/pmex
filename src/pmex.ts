@@ -84,6 +84,7 @@ export default function pmex(command: Command, options?: ExecSyncOptions) {
     process.stdout.write(' bin ');
   }
   if (isPkgScript) {
+    printRest.splice(0, 1);
     process.stdout.write(colors.bgYellow);
     process.stdout.write(' run ');
   }
