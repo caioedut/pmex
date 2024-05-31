@@ -2,6 +2,7 @@ import { execSync, ExecSyncOptions } from 'node:child_process';
 import { existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { RUNNERS } from './constants';
+import resolver from './resolver';
 
 export type Command =
   | string
@@ -76,11 +77,13 @@ export default function pmex(command: Command, options?: ExecSyncOptions) {
   const cmdArg = command.split(' ').shift() ?? '';
   const isBinScript = binScripts.includes(cmdArg);
   const isPkgScript = pkgScripts.includes(cmdArg);
-  const runScript = `${isBinScript ? '' : `${runner} `}${isPkgScript ? 'run ' : ''}${command}`;
+  const runScript = resolver(`${isBinScript ? '' : `${runner} `}${isPkgScript ? 'run ' : ''}${command}`);
+
+  const [printRunner, ...printRest] = runScript.split(' ');
 
   process.stdout.write(`\n`);
   process.stdout.write(colors.bgBlue);
-  process.stdout.write(` ${runner} `);
+  process.stdout.write(` ${printRunner} `);
   if (isBinScript) {
     process.stdout.write(colors.bgGreen);
     process.stdout.write(` bin `);
@@ -90,7 +93,7 @@ export default function pmex(command: Command, options?: ExecSyncOptions) {
     process.stdout.write(` run `);
   }
   process.stdout.write(colors.reset);
-  process.stdout.write(` ${command}`);
+  process.stdout.write(` ${printRest.join(' ')}`);
   process.stdout.write(`\n\n`);
 
   return execSync(runScript, {
