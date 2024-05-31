@@ -20,7 +20,7 @@ export default function args(defaults?: Record<string, string | number | boolean
   };
 
   if (defaults) {
-    for (let attr in defaults) {
+    for (const attr in defaults) {
       const finalAttr = aliases[attr] ?? attr;
       result[finalAttr] = defaults[attr];
     }
@@ -38,7 +38,7 @@ export default function args(defaults?: Record<string, string | number | boolean
     if (arg.startsWith('-')) {
       const split = arg.split('=');
 
-      let attr: string = split.shift()!.replace(/^-{1,2}/g, '');
+      let attr: string = split.shift()?.replace(/^-{1,2}/g, '') ?? '';
       let value: string | number | boolean = split.join('=');
 
       if (!split.length && typeof next === 'string' && !next.startsWith('-')) {
@@ -55,8 +55,8 @@ export default function args(defaults?: Record<string, string | number | boolean
       }
 
       // @ts-expect-error
-      if (typeof value === 'string' && !isNaN(value) && !isNaN(parseFloat(value))) {
-        value = parseFloat(value);
+      if (typeof value === 'string' && !isNaN(value) && !isNaN(Number.parseFloat(value))) {
+        value = Number.parseFloat(value);
       }
 
       // Parse case

@@ -1,4 +1,4 @@
-import { execSync, ExecSyncOptions } from 'node:child_process';
+import { type ExecSyncOptions, execSync } from 'node:child_process';
 import { existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { RUNNERS } from './constants';
@@ -33,36 +33,31 @@ export default function pmex(command: Command, options?: ExecSyncOptions) {
           ? 'npm'
           : null;
 
-  if (command && typeof command !== 'string') {
-    // @ts-expect-error
-    command = command?.[runner] ?? command?.default;
-  }
-
-  command = `${command ?? ''}`.trim();
+  // @ts-expect-error
+  let cmd: string = `${typeof command === 'string' ? command : command?.[runner] ?? command?.default}`.trim();
 
   // Check if command replaces package manager detection
-  if (RUNNERS.some((runner) => (command as string).startsWith(`${runner} `))) {
+  if (RUNNERS.some((runner) => (cmd as string).startsWith(`${runner} `))) {
     // @ts-expect-error
-    runner = command.split(' ', 1).shift();
+    runner = cmd.split(' ', 1).shift();
   }
 
-  command = command
+  cmd = cmd
     .replace(new RegExp(`^(${RUNNERS.join('|')})\\s+`), '')
     .replace(/^(run)\s+/, '')
     .trim();
 
   // Detect global binaries
-  const npmGlobalDir = execSync(`npm root -g`).toString().trim();
+  const npmGlobalDir = execSync('npm root -g').toString().trim();
   const globalBins = readdirSync(npmGlobalDir)
     .filter((file) => {
       return existsSync(join(npmGlobalDir, file, 'package.json'));
     })
-    .map((file) => {
+    .flatMap((file) => {
       const pkgJSON = require(join(npmGlobalDir, file, 'package.json'));
       const pkgBin = pkgJSON.bin ?? {};
       return typeof pkgBin === 'string' ? pkgJSON.name : Object.keys(pkgBin);
-    })
-    .flat();
+    });
 
   // Detect local binaries
   const binPath = join(`${process.cwd()}`, 'node_modules', '.bin');
@@ -74,27 +69,27 @@ export default function pmex(command: Command, options?: ExecSyncOptions) {
   const pkgPath = join(`${process.cwd()}`, 'package.json');
   const pkgScripts: string[] = existsSync(pkgPath) ? Object.keys(require(pkgPath)?.scripts ?? {}) : [];
 
-  const cmdArg = command.split(' ').shift() ?? '';
+  const cmdArg = cmd.split(' ').shift() ?? '';
   const isBinScript = binScripts.includes(cmdArg);
   const isPkgScript = pkgScripts.includes(cmdArg);
-  const runScript = resolver(`${isBinScript ? '' : `${runner} `}${isPkgScript ? 'run ' : ''}${command}`);
+  const runScript = resolver(`${isBinScript ? '' : `${runner} `}${isPkgScript ? 'run ' : ''}${cmd}`);
 
   const [printRunner, ...printRest] = runScript.split(' ');
 
-  process.stdout.write(`\n`);
+  process.stdout.write('\n');
   process.stdout.write(colors.bgBlue);
   process.stdout.write(` ${printRunner} `);
   if (isBinScript) {
     process.stdout.write(colors.bgGreen);
-    process.stdout.write(` bin `);
+    process.stdout.write(' bin ');
   }
   if (isPkgScript) {
     process.stdout.write(colors.bgYellow);
-    process.stdout.write(` run `);
+    process.stdout.write(' run ');
   }
   process.stdout.write(colors.reset);
   process.stdout.write(` ${printRest.join(' ')}`);
-  process.stdout.write(`\n\n`);
+  process.stdout.write('\n\n');
 
   return execSync(runScript, {
     stdio: 'inherit',

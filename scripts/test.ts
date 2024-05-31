@@ -1,5 +1,5 @@
 import pmex from '../src';
 
-pmex(`prettier "{scripts,src}/**/*.{js,jsx,ts,tsx}" --check`);
+pmex('biome check ./scripts ./src');
 
-pmex(`tsc --noEmit --skipLibCheck`);
+pmex('tsc --noEmit --skipLibCheck');
