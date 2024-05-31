@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { existsSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, statSync } from 'node:fs';
 import { RUNNERS } from './constants';
 import pmex from './pmex';
 
@@ -10,25 +10,35 @@ const isPackageScript = Boolean(process.env.npm_lifecycle_event);
 
 let command = args.join(' ');
 
-// Check if command replaces package manager detection
-if (!isPackageScript && !RUNNERS.some((runner) => command.startsWith(`${runner} `))) {
+if (!isPackageScript) {
   let runner = null;
-  let mtimeMs = 0;
 
-  const locks = {
-    bun: existsSync('bun.lockb') ? statSync('bun.lockb').mtimeMs : 0,
-    pnpm: existsSync('pnpm-lock.yaml') ? statSync('pnpm-lock.yaml').mtimeMs : 0,
-    yarn: existsSync('yarn.lock') ? statSync('yarn.lock').mtimeMs : 0,
-    npm: existsSync('package-lock.json') ? statSync('package-lock.json').mtimeMs : 0,
-  };
+  if (existsSync('package.json')) {
+    const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
 
-  for (const attr in locks) {
-    // @ts-expect-error
-    const currentModifiedAt = locks[attr];
+    if (pkg.packageManager) {
+      runner = pkg.packageManager?.split('@')?.[0];
+    }
+  }
 
-    if (currentModifiedAt && currentModifiedAt > mtimeMs) {
-      runner = attr;
-      mtimeMs = currentModifiedAt;
+  if (!RUNNERS.some((runner) => command.startsWith(`${runner} `))) {
+    let mtimeMs = 0;
+
+    const locks = {
+      bun: existsSync('bun.lockb') ? statSync('bun.lockb').mtimeMs : 0,
+      pnpm: existsSync('pnpm-lock.yaml') ? statSync('pnpm-lock.yaml').mtimeMs : 0,
+      yarn: existsSync('yarn.lock') ? statSync('yarn.lock').mtimeMs : 0,
+      npm: existsSync('package-lock.json') ? statSync('package-lock.json').mtimeMs : 0,
+    };
+
+    for (const attr in locks) {
+      // @ts-expect-error
+      const currentModifiedAt = locks[attr];
+
+      if (currentModifiedAt && currentModifiedAt > mtimeMs) {
+        runner = attr;
+        mtimeMs = currentModifiedAt;
+      }
     }
   }
 
