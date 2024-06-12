@@ -16,6 +16,8 @@ export default function resolver(command: string) {
   return newCommand.trim();
 }
 
+const isYarnLegacy = process?.env?.npm_config_user_agent?.match(/^yarn\/(\S+)/)?.[1]?.startsWith('1.');
+
 const add = {
   npm: 'install',
   yarn: 'add',
@@ -32,7 +34,7 @@ const del = {
 
 const dlx = {
   npm: 'npx',
-  yarn: 'yarn dlx',
+  yarn: isYarnLegacy ? 'npx' : 'yarn dlx',
   pnpm: 'pnpm dlx',
   bun: 'bunx',
 };
