@@ -122,5 +122,3 @@ const colors = {
   bgWhite: '\x1b[47m',
   bgGray: '\x1b[100m',
 };
-
-pmex('jest');
