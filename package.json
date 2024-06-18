@@ -1,8 +1,16 @@
 {
   "name": "pmex",
   "description": "Run dynamic NPM or YARN or PNPM",
-  "version": "2.0.7",
-  "keywords": ["node", "npm", "yarn", "pnpm", "bun", "npx", "bunx"],
+  "version": "2.0.8",
+  "keywords": [
+    "node",
+    "npm",
+    "yarn",
+    "pnpm",
+    "bun",
+    "npx",
+    "bunx"
+  ],
   "license": "MIT",
   "repository": "https://github.com/caioedut/pmex",
   "author": {
@@ -11,7 +19,9 @@
   },
   "main": "./dist/index.js",
   "bin": "./dist/cli.js",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "test": "tsx scripts/test.ts",
     "build": "tsx scripts/build.ts",
