@@ -37,7 +37,7 @@ export default function pmex(command: Command, options?: ExecSyncOptions) {
   let cmd: string = `${typeof command === 'string' ? command : command?.[runner] ?? command?.default}`.trim();
 
   // Check if command replaces package manager detection
-  if (RUNNERS.some((runner) => (cmd as string).startsWith(`${runner} `))) {
+  if (RUNNERS.some((runner) => cmd.startsWith(`${runner} `))) {
     // @ts-expect-error
     runner = cmd.split(' ', 1).shift();
   }
@@ -122,3 +122,5 @@ const colors = {
   bgWhite: '\x1b[47m',
   bgGray: '\x1b[100m',
 };
+
+pmex('jest');
