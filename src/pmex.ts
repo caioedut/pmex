@@ -49,15 +49,17 @@ export default function pmex(command: Command, options?: ExecSyncOptions) {
 
   // Detect global binaries
   const npmGlobalDir = execSync('npm root -g').toString().trim();
-  const globalBins = readdirSync(npmGlobalDir)
-    .filter((file) => {
-      return existsSync(join(npmGlobalDir, file, 'package.json'));
-    })
-    .flatMap((file) => {
-      const pkgJSON = require(join(npmGlobalDir, file, 'package.json'));
-      const pkgBin = pkgJSON.bin ?? {};
-      return typeof pkgBin === 'string' ? pkgJSON.name : Object.keys(pkgBin);
-    });
+  const globalBins = existsSync(npmGlobalDir)
+    ? readdirSync(npmGlobalDir)
+        .filter((file) => {
+          return existsSync(join(npmGlobalDir, file, 'package.json'));
+        })
+        .flatMap((file) => {
+          const pkgJSON = require(join(npmGlobalDir, file, 'package.json'));
+          const pkgBin = pkgJSON.bin ?? {};
+          return typeof pkgBin === 'string' ? pkgJSON.name : Object.keys(pkgBin);
+        })
+    : [];
 
   // Detect local binaries
   const binPath = join(`${process.cwd()}`, 'node_modules', '.bin');
