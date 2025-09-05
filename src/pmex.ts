@@ -47,23 +47,37 @@ export default function pmex(command: Command, options?: ExecSyncOptions) {
     .replace(/^(run)\s+/, '')
     .trim();
 
-  // Detect global binaries
-  const npmGlobalDir = execSync('npm root -g').toString().trim();
-  const globalBins = existsSync(npmGlobalDir)
-    ? readdirSync(npmGlobalDir)
-        .filter((file) => {
-          return existsSync(join(npmGlobalDir, file, 'package.json'));
-        })
-        .flatMap((file) => {
-          const pkgJSON = require(join(npmGlobalDir, file, 'package.json'));
-          const pkgBin = pkgJSON.bin ?? {};
-          return typeof pkgBin === 'string' ? pkgJSON.name : Object.keys(pkgBin);
-        })
-    : [];
+  const globalBins: string[] = [];
+
+  // Detect NPM global binaries
+  try {
+    const npmGlobalDir = execSync('npm root -g').toString().trim();
+
+    if (existsSync(npmGlobalDir)) {
+      globalBins.push(
+        ...readdirSync(npmGlobalDir)
+          .filter((file) => {
+            return existsSync(join(npmGlobalDir, file, 'package.json'));
+          })
+          .flatMap((file) => {
+            const pkgJSON = require(join(npmGlobalDir, file, 'package.json'));
+            const pkgBin = pkgJSON.bin ?? {};
+            return typeof pkgBin === 'string' ? (pkgJSON.name as string) : Object.keys(pkgBin);
+          }),
+      );
+    }
+  } catch {}
+
+  // TODO:
+  // Detect BUN global binaries
 
   // Detect local binaries
   const binPath = join(`${process.cwd()}`, 'node_modules', '.bin');
-  const localBins = existsSync(binPath) ? readdirSync(binPath).map((file) => file.split('.').shift()) : [];
+  const localBins = existsSync(binPath)
+    ? readdirSync(binPath)
+        .map((file) => file.split('.').shift())
+        .filter((item) => item !== undefined)
+    : [];
 
   // All bins
   const binScripts: string[] = [...globalBins, ...localBins];

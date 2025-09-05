@@ -24,8 +24,11 @@ if (!isPackageScript) {
   if (!RUNNERS.some((runner) => command.startsWith(`${runner} `))) {
     let mtimeMs = 0;
 
+    const bunLock = existsSync('bun.lock') ? statSync('bun.lock').mtimeMs : 0;
+    const bunLockB = existsSync('bun.lockb') ? statSync('bun.lockb').mtimeMs : 0;
+
     const locks = {
-      bun: existsSync('bun.lockb') ? statSync('bun.lockb').mtimeMs : 0,
+      bun: Math.max(bunLock, bunLockB),
       pnpm: existsSync('pnpm-lock.yaml') ? statSync('pnpm-lock.yaml').mtimeMs : 0,
       yarn: existsSync('yarn.lock') ? statSync('yarn.lock').mtimeMs : 0,
       npm: existsSync('package-lock.json') ? statSync('package-lock.json').mtimeMs : 0,
