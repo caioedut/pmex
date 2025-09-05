@@ -34,7 +34,7 @@ export default function pmex(command: Command, options?: ExecSyncOptions) {
           : null;
 
   // @ts-expect-error
-  let cmd: string = `${typeof command === 'string' ? command : command?.[runner] ?? command?.default}`.trim();
+  let cmd: string = `${typeof command === 'string' ? command : (command?.[runner] ?? command?.default)}`.trim();
 
   // Check if command replaces package manager detection
   if (RUNNERS.some((runner) => cmd.startsWith(`${runner} `))) {
