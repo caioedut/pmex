@@ -29,9 +29,9 @@
     "pmex": "tsx src/cli.ts"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.7.3",
-    "@types/node": "^18.19.33",
-    "tsx": "^4.11.0",
-    "typescript": "^5.4.5"
+    "@biomejs/biome": "^1.9.4",
+    "@types/node": "^18.19.124",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
   }
 }
