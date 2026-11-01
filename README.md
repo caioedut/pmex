@@ -100,7 +100,7 @@ pmex({
   npm: 'cache clean --force',
   yarn: 'cache clean --all',
   pnpm: 'store prune',
-  bun: 'pm cache rm -g'
+  bun: 'pm cache rm'
 })
 
 // Fallback to default

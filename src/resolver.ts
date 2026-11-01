@@ -3,11 +3,17 @@ export default function resolver(command: string) {
 
   // @ts-expect-error
   const newFnName = aliases[fnName]?.[runner] ?? fnName;
-  let newCommand = `${newFnName} ${params.join(' ')}`;
 
+  // npm requires "--" to forward flags to the script (params[0] is the script name)
   if (runner === 'npm' && newFnName === 'run') {
-    newCommand = newCommand.replace(/-/, '-- -');
+    const firstFlag = params.findIndex((param, index) => index > 0 && param.startsWith('-'));
+
+    if (firstFlag > 0 && params[firstFlag] !== '--') {
+      params.splice(firstFlag, 0, '--');
+    }
   }
+
+  let newCommand = `${newFnName} ${params.join(' ')}`;
 
   if (fnName !== 'x' && fnName !== 'dlx') {
     newCommand = `${runner} ${newCommand}`;

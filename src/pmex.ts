@@ -22,24 +22,21 @@ export type Command =
 
 export default function pmex(command: Command, options?: ExecSyncOptions) {
   const execPath = `${process?.env?.npm_execpath || ''}`.toLowerCase();
+  const userAgent = `${process?.env?.npm_config_user_agent || ''}`.toLowerCase();
 
-  let runner: (typeof RUNNERS)[number] | null = execPath.includes('bun')
-    ? 'bun'
-    : execPath.includes('pnpm')
-      ? 'pnpm'
-      : execPath.includes('yarn')
-        ? 'yarn'
-        : execPath.includes('npm')
-          ? 'npm'
-          : null;
+  const detected = (['bun', 'pnpm', 'yarn', 'npm'] as const).find(
+    (name) => execPath.includes(name) || userAgent.startsWith(`${name}/`),
+  );
+
+  // Fallback to npm when no package manager is detected
+  let runner: (typeof RUNNERS)[number] = detected ?? 'npm';
 
   // @ts-expect-error
   let cmd: string = `${typeof command === 'string' ? command : (command?.[runner] ?? command?.default)}`.trim();
 
   // Check if command replaces package manager detection
-  if (RUNNERS.some((runner) => cmd.startsWith(`${runner} `))) {
-    // @ts-expect-error
-    runner = cmd.split(' ', 1).shift();
+  if (RUNNERS.some((item) => cmd.startsWith(`${item} `))) {
+    runner = cmd.split(' ', 1)[0] as (typeof RUNNERS)[number];
   }
 
   cmd = cmd
@@ -51,7 +48,9 @@ export default function pmex(command: Command, options?: ExecSyncOptions) {
 
   // Detect NPM global binaries
   try {
-    const npmGlobalDir = execSync('npm root -g').toString().trim();
+    const npmGlobalDir = execSync('npm root -g', { stdio: ['ignore', 'pipe', 'ignore'] })
+      .toString()
+      .trim();
 
     if (existsSync(npmGlobalDir)) {
       globalBins.push(
@@ -75,8 +74,8 @@ export default function pmex(command: Command, options?: ExecSyncOptions) {
   const binPath = join(`${process.cwd()}`, 'node_modules', '.bin');
   const localBins = existsSync(binPath)
     ? readdirSync(binPath)
-        .map((file) => file.split('.').shift())
-        .filter((item) => item !== undefined)
+        // Windows creates one shim per extension (cmd, ps1, exe...)
+        .map((file) => file.replace(/\.(cmd|ps1|exe|bunx)$/, ''))
     : [];
 
   // All bins

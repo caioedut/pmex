@@ -11,43 +11,52 @@ const isPackageScript = Boolean(process.env.npm_lifecycle_event);
 let command = args.join(' ');
 
 if (!isPackageScript) {
-  let runner = null;
+  let runner: string | null = null;
 
-  if (existsSync('package.json')) {
-    const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
+  if (!RUNNERS.some((item) => command.startsWith(`${item} `))) {
+    // Explicit "packageManager" field has priority over lockfiles
+    if (existsSync('package.json')) {
+      try {
+        const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
+        const name = `${pkg.packageManager ?? ''}`.split('@')[0];
 
-    if (pkg.packageManager) {
-      runner = pkg.packageManager?.split('@')?.[0];
+        if ((RUNNERS as readonly string[]).includes(name)) {
+          runner = name;
+        }
+      } catch {}
     }
-  }
 
-  if (!RUNNERS.some((runner) => command.startsWith(`${runner} `))) {
-    let mtimeMs = 0;
+    // Otherwise, use the most recent lockfile
+    if (!runner) {
+      let mtimeMs = 0;
 
-    const bunLock = existsSync('bun.lock') ? statSync('bun.lock').mtimeMs : 0;
-    const bunLockB = existsSync('bun.lockb') ? statSync('bun.lockb').mtimeMs : 0;
+      const mtime = (file: string) => (existsSync(file) ? statSync(file).mtimeMs : 0);
 
-    const locks = {
-      bun: Math.max(bunLock, bunLockB),
-      pnpm: existsSync('pnpm-lock.yaml') ? statSync('pnpm-lock.yaml').mtimeMs : 0,
-      yarn: existsSync('yarn.lock') ? statSync('yarn.lock').mtimeMs : 0,
-      npm: existsSync('package-lock.json') ? statSync('package-lock.json').mtimeMs : 0,
-    };
+      const locks = {
+        bun: Math.max(mtime('bun.lock'), mtime('bun.lockb')),
+        pnpm: mtime('pnpm-lock.yaml'),
+        yarn: mtime('yarn.lock'),
+        npm: mtime('package-lock.json'),
+      };
 
-    for (const attr in locks) {
-      // @ts-expect-error
-      const currentModifiedAt = locks[attr];
-
-      if (currentModifiedAt && currentModifiedAt > mtimeMs) {
-        runner = attr;
-        mtimeMs = currentModifiedAt;
+      for (const [name, modifiedAt] of Object.entries(locks)) {
+        if (modifiedAt > mtimeMs) {
+          runner = name;
+          mtimeMs = modifiedAt;
+        }
       }
     }
-  }
 
-  if (runner) {
+    // Nothing detected, fallback to npm
+    runner ??= 'npm';
+
     command = `${runner} ${command}`;
   }
 }
 
-pmex(command);
+try {
+  pmex(command);
+} catch (error: any) {
+  // The child process already printed its own output
+  process.exit(typeof error?.status === 'number' ? error.status : 1);
+}
